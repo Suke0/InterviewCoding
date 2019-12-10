@@ -1,5 +1,8 @@
 package node;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 public class NodeCoding {
 	//在单链表中删除倒数第K个节点
 	//----------------------strat----------------------------
@@ -242,15 +245,218 @@ public class NodeCoding {
 			return (getLive(i-1,m) + m - 1) % i + 1;
 		}
 	}
+//	public static void main(String[] args) {
+//		Node node1 = new Node(1);
+//		Node node2 = new Node(2);
+//		Node node3 = new Node(3);
+//		Node node4 = new Node(4);
+//		Node node5 = new Node(5);
+//		Node node6 = new Node(6);
+//		Node node7 = new Node(7);
+//		Node node8 = new Node(8);
+//		
+//		node1.next = node2;
+//		node2.next = node3;
+//		node3.next = node4;
+//		node4.next = node5;
+//		node5.next = node1;
+//		node5.next = node6;
+//		node6.next = node7;
+//		node7.next = node8;
+//		node8.next = node1;
+//		
+//		
+//		
+//		Node cur = yuesefuProblem(node1,3);
+//		System.out.println(cur.value);
+//		
+//	}
+	//-------------------------end---------------------------------------
+	
+	
+	
+	//将单链表的每k个节点之间逆序
+	//----------------------strat----------------------------
+	public static Node reverseListK(Node head,int k) {
+		if(head == null || head.next == null || k <= 1) {
+			return head;
+		}
+		
+		//将每k个节点看成一个单独的单链表，分别用两个数组存放每个单链表的表头和表尾；
+		ArrayList<Node> headArr = new ArrayList<Node>();
+		ArrayList<Node> endArr = new ArrayList<Node>();
+		headArr.add(head);
+		
+		Node cur = head;
+		int tmp = 0;
+		while(cur != null) {
+			tmp++;
+			if(tmp % k == 0) {
+				endArr.add(cur);
+				if(cur.next != null) {
+					headArr.add(cur.next);
+				}
+			}
+			cur = cur.next;
+		}
+		
+		//System.out.println(headArr.size());
+		//System.out.println(endArr.size());
+		
+		int index = -1;
+		Node curHead = head;
+		Node holdNode = null;
+		while(++index < endArr.size()) {
+			holdNode = endArr.get(index).next;
+			endArr.get(index).next = null;
+			reverseList(curHead);
+			try {
+				curHead.next = endArr.get(index + 1);
+			} catch (Exception e) {
+				curHead.next = null;
+			}
+			curHead = holdNode;
+		}
+		
+		if(headArr.size() != endArr.size()) {
+			int len = headArr.size();
+			headArr.get(len-2).next = headArr.get(len-1);
+		}
+		
+		return endArr.get(0);
+	}
+	
+//	public static void main(String[] args) {
+//		Node node1 = new Node(1);
+//		Node node2 = new Node(2);
+//		Node node3 = new Node(3);
+//		Node node4 = new Node(4);
+//		Node node5 = new Node(5);
+//		Node node6 = new Node(6);
+//		Node node7 = new Node(7);
+//		Node node8 = new Node(8);
+//		
+//		node1.next = node2;
+//		node2.next = node3;
+//		node3.next = node4;
+//		node4.next = node5;
+//		node5.next = node1;
+//		node5.next = node6;
+//		node6.next = node7;
+//		node7.next = node8;
+//		
+//		Node cur = reverseListK(node1,5);
+//		while(cur != null) {
+//			System.out.println(cur.value);
+//			cur = cur.next;
+//		}
+//	}
+	//-------------------------end---------------------------------------
+	
+	//将单链表的每k个节点之间逆序,第二种实现
+	//----------------------strat----------------------------
+	public static Node otherReverseListK(Node head,int k) {
+		if(head == null || head.next == null || k <= 1) {
+			return head;
+		}
+		
+		Node cur = head;
+		Node start = null;
+		Node pre = null;
+		Node next = null;
+		int count = 1;
+		while(cur != null) {
+			next = cur.next;
+			if(count == k) {
+				start = pre == null ? head : pre.next;
+				head = pre == null ? cur : head;
+				resign(pre, start, cur , next);
+				count = 0;
+			}
+			count++;
+			cur = next;
+		}
+		return head;
+	}
+	
+	public static void resign(Node left, Node start,Node end,Node right) {
+		Node pre = start;
+		Node next = null;
+		Node cur = start.next;
+		while(cur != right) {
+			next = cur.next;
+			cur.next = pre;
+			pre = cur;
+			cur = next;
+		}
+		start.next = right;
+		if(left != null) {
+			left.next = end;
+		}
+		
+	}
+	
+//	public static void main(String[] args) {
+//		Node node1 = new Node(1);
+//		Node node2 = new Node(2);
+//		Node node3 = new Node(3);
+//		Node node4 = new Node(4);
+//		Node node5 = new Node(5);
+//		Node node6 = new Node(6);
+//		Node node7 = new Node(7);
+//		Node node8 = new Node(8);
+//		
+//		node1.next = node2;
+//		node2.next = node3;
+//		node3.next = node4;
+//		node4.next = node5;
+//		node5.next = node1;
+//		node5.next = node6;
+//		node6.next = node7;
+//		node7.next = node8;
+//		
+//		Node cur = otherReverseListK(node1,3);
+//		while(cur != null) {
+//			System.out.println(cur.value);
+//			cur = cur.next;
+//		}
+//	}
+	//-------------------------end---------------------------------------
+	
+	
+	//删除无序单链表中值重复出现的节点
+	//----------------------strat----------------------------
+	public static Node removeRepeatValueNode(Node head) {
+		if(head == null) {
+			return head;
+		}
+		
+		HashSet<Integer> set = new HashSet<Integer>();
+		Node cur = head;
+		Node pre = null;
+		while(cur != null) {
+			if(set.contains(cur.value)) {
+				pre.next = cur.next;
+			}else {
+				set.add(cur.value);
+				pre = cur;
+			}
+			cur = cur.next;
+			
+		}
+		return head;
+	}
+	
+
 	public static void main(String[] args) {
 		Node node1 = new Node(1);
-		Node node2 = new Node(2);
+		Node node2 = new Node(5);
 		Node node3 = new Node(3);
 		Node node4 = new Node(4);
-		Node node5 = new Node(5);
-		Node node6 = new Node(6);
-		Node node7 = new Node(7);
-		Node node8 = new Node(8);
+		Node node5 = new Node(3);
+		Node node6 = new Node(2);
+		Node node7 = new Node(6);
+		Node node8 = new Node(1);
 		
 		node1.next = node2;
 		node2.next = node3;
@@ -260,13 +466,12 @@ public class NodeCoding {
 		node5.next = node6;
 		node6.next = node7;
 		node7.next = node8;
-		node8.next = node1;
 		
-		
-		
-		Node cur = yuesefuProblem(node1,3);
-		System.out.println(cur.value);
-		
+		Node cur = removeRepeatValueNode(node1);
+		while(cur != null) {
+			System.out.println(cur.value);
+			cur = cur.next;
+		}
 	}
 	//-------------------------end---------------------------------------
 	
