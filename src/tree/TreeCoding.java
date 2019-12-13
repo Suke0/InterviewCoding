@@ -1,5 +1,7 @@
 package tree;
 
+import java.util.Stack;
+
 class Node {
 	Node left = null;
 	Node right = null;
@@ -18,7 +20,7 @@ public class TreeCoding {
 		if(head == null) {
 			return;
 		}
-		System.out.println(head.value);
+		System.out.print(head.value+", ");	
 		preIterator(head.left);
 		preIterator(head.right);
 	}
@@ -27,7 +29,7 @@ public class TreeCoding {
 			return;
 		}
 		midIterator(head.left);
-		System.out.println(head.value);
+		System.out.print(head.value+", ");	
 		midIterator(head.right);
 			
 	}
@@ -37,19 +39,63 @@ public class TreeCoding {
 		}
 		endIterator(head.left);
 		endIterator(head.right);
-		System.out.println(head.value);	
+		System.out.print(head.value+", ");	
 	}
 	
 	//非递归方式
-	public static void opreIterator(Node head) {
-		
-		
+	public static void opreIterator(Node head) {//根左右
+		if(head !=null) {
+			Stack<Node> stack = new Stack<Node>();	
+			stack.push(head);
+			while(!stack.isEmpty()) {
+				head = stack.pop();
+				System.out.print(head.value+", ");	
+				if(head.right != null) {
+					stack.push(head.right);
+				}
+				if(head.left !=null) {
+					stack.push(head.left);
+				}
+			}
+		}
+		System.out.println();
 	}
-	public static void omidIterator(Node head) {
-			
+	public static void omidIterator(Node head) {//左根右
+		if(head != null) {
+			Stack<Node> stack = new Stack<Node>();
+			while(!stack.isEmpty() || head !=null) {
+				if(head != null) {
+					stack.push(head);
+					head = head.left;
+				}else {
+					head = stack.pop();
+					System.out.print(head.value+", ");
+					head = head.right;
+				}
+			}
+		}
+		System.out.println();
 	}
-	public static void oendIterator(Node head) {
-		
+	public static void oendIterator(Node head) {//左右根
+		if(head != null) {
+			Stack<Node> s1 = new Stack<Node>();
+			Stack<Node> s2 = new Stack<Node>();
+			s1.push(head);
+			while(!s1.isEmpty()) {
+				head = s1.pop();
+				s2.push(head);
+				if(head.left != null) {
+					s1.push(head.left);
+				}
+				if(head.right != null) {
+					s1.push(head.right);
+				}
+			}
+			while(!s2.isEmpty()) {
+				System.out.print(s2.pop().value+", ");
+			}
+		}
+		System.out.println();
 	}
 	
 
@@ -70,6 +116,16 @@ public class TreeCoding {
 		node3.right = node7;
 		node4.left = node8;
 		preIterator(node1);
+		System.out.println();
+		opreIterator(node1);
+		
+		midIterator(node1);
+		System.out.println();
+		omidIterator(node1);
+		
+		endIterator(node1);
+		System.out.println();
+		oendIterator(node1);
 		
 	}
 	//-------------------------end---------------------------------------
