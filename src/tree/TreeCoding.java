@@ -1,5 +1,7 @@
 package tree;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 class Node {
@@ -128,6 +130,39 @@ public class TreeCoding {
 		oendIterator(node1);
 		
 	}
+	//-------------------------end---------------------------------------
+	
+	
+	//二叉树中累加和为给定值的最长路径的长度
+	//----------------------strat----------------------------
+	public static int maxLengthSumK(Node head, int k) {
+		if(head == null) {
+			return 0;
+		}
+		HashMap<Integer,Integer> sumMap = new HashMap<Integer,Integer>();
+		sumMap.put(0, 0);
+		return preOrder(head,k,0,1,0,sumMap);
+	}
+	
+	public static int preOrder(Node head,int k,int preSum,int level,int maxLen,HashMap<Integer,Integer> sumMap) {
+		if(head == null) {
+			return maxLen;
+		}
+		int curSum = preSum + head.value;
+		if(!sumMap.containsKey(curSum)) {
+			sumMap.put(curSum, level);
+		}
+		if(sumMap.containsKey(curSum - k)) {
+			maxLen = Math.max(level - sumMap.get(curSum-k),maxLen);
+		}
+		maxLen = preOrder(head.left,k,curSum,level + 1,maxLen,sumMap);
+		maxLen = preOrder(head.right,k,curSum,level + 1,maxLen,sumMap);
+		if(sumMap.get(curSum) == level) {
+			sumMap.remove(curSum);
+		}
+		return maxLen;
+	}
+
 	//-------------------------end---------------------------------------
 
 
